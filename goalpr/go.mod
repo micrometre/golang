@@ -1,4 +1,4 @@
-module github.com/micrometre/go-video-streaming
+module github.com/micrometre/go-alpr-streaming
 
 go 1.22.2
 

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"os"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -30,9 +30,12 @@ func main() {
 
 	router.POST("/alprd", func(c *gin.Context) {
 		body, _ := io.ReadAll(c.Request.Body)
-		
+ 		
 		println(string(body))
 	})
 
 	router.Run(":5000")
 }
+
+
+
