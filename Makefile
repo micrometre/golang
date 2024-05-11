@@ -20,3 +20,6 @@ restart:
 remove:
 	docker-compose down -v
 	docker-compose rm -f
+
+post:
+	bash -xv scrippts/post.sh
