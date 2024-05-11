@@ -17,9 +17,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 395F844E696D423F6B7ACBBA301539668E6
-      MYSQL_DATABASE: alprdata
+      MYSQL_DATABASE: recordings
       MYSQL_USER: alpruser
-      MYSQL_PASSWORD: -p0o9i8U
+      MYSQL_PASSWORD: p0o9i8U
     ports:
     - 3306:3306
     expose:
