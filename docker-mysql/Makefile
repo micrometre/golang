@@ -1,13 +1,3 @@
-stop:	
-	docker-compose stop
-remove:	
-	docker-compose down -v
-start:
-	docker-compose up -d 
-
-stop:
-	docker-compose down 
-
 update:
 	docker-compose down 
 	docker-compose pull
