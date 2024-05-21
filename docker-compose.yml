@@ -1,0 +1,11 @@
+# docker-compose.yml
+version: '3.8'
+services:
+  alpr:
+    build: ./openalpr
+    user: root
+    volumes:
+      - ./goalpr/assets/images:/var/lib/openalpr/plateimages      
+networks:
+  redis-network:
+    driver: bridge      

@@ -1,7 +1,7 @@
 .PHONY: run
 clean: 
-	rm -rf goalpr/assets/images
-	mkdir goalpr/assets/images
+	sudo  rm -rf goalpr/assets/images
+	sudo  mkdir goalpr/assets/images
 
 start:
 	docker-compose up -d 
