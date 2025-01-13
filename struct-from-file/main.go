@@ -8,8 +8,6 @@ import (
 )
 
 type Person struct {
-	Name    string
-	Age     int64
 	Hobbies []string
 }
 
@@ -25,11 +23,9 @@ func main() {
 	content := string(jsonData)
 
 	// Print the contents of the file
-	fmt.Println(content)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-
-	fmt.Println(data.Name)
+    fmt.Println((content))
 }
