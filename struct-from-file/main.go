@@ -6,14 +6,20 @@ import (
 	"log"
 	"os"
 )
-
-type Person struct {
-	Results []string
+type Results struct {
+    Results []Result `json:"users"`
 }
 
+type Result struct {
+    Plate   string `json:"plate"`
+
+}
+
+
 type Alprd struct {
-	Hobbies []string
     Uuid   string `json:"uuid"`
+    Plate   string `json:"plate"`
+    Results []Result `json:"results"`
 }
 func main() {
 	filePath := "db.json"
@@ -23,14 +29,12 @@ func main() {
 	}
 	data := Alprd{}
 	err = json.Unmarshal([]byte(jsonData), &data)
-	content := string(jsonData)
+	//content := string(jsonData)
 
-	// Print the contents of the file
 	if err != nil {
 		log.Println(err)
 		return
 	}
-    fmt.Println(content)
-	fmt.Println("Hobbies: ", data.Uuid)
-
+	fmt.Println("uuid: ", data.Uuid)
+	fmt.Println("uuid: ", data.Results)
 }

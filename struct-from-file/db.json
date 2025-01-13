@@ -159,50 +159,7 @@
             "matches_template": 0
           }
         ]
-      },
-      {
-        "plate": "EJLESSIE",
-        "epoch_time": 1402158050,
-        "confidence": 78.167984,
-        "matches_template": 0,
-        "region": "",
-        "region_confidence": 0,
-        "processing_time_ms": 51.650604,
-        "coordinates": [
-          {
-            "x": 226,
-            "y": 369
-          },
-          {
-            "x": 348,
-            "y": 348
-          },
-          {
-            "x": 355,
-            "y": 406
-          },
-          {
-            "x": 231,
-            "y": 429
-          }
-        ],
-        "candidates": [
-          {
-            "plate": "EJLESSIE",
-            "confidence": 78.167984,
-            "matches_template": 0
-          },
-          {
-            "plate": "VI5A",
-            "confidence": 58.167984,
-            "matches_template": 0
-          },
-          {
-            "plate": "EDLESSIE",
-            "confidence": 77.61319,
-            "matches_template": 0
-          }
-        ]
       }
+      
     ]
   }
