@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 )
 
 type Person struct {
@@ -15,7 +15,7 @@ type Person struct {
 
 func main() {
    filePath := "db.json" 
-   jsonData, err := ioutil.ReadFile(filePath) 
+   jsonData, err := os.ReadFile(filePath) 
    jsonStr := "{\"name\": \"Prashant\", \"age\": 27, \"hobbies\":[\"sports\",\"music\"]}"
    data := Person{}
    err = json.Unmarshal([]byte(jsonStr), &data)
