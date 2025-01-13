@@ -36,5 +36,5 @@ func main() {
 		return
 	}
 	fmt.Println("uuid: ", data.Uuid)
-	fmt.Println("uuid: ", data.Results)
+	fmt.Println("Plate: ", data.Results)
 }
