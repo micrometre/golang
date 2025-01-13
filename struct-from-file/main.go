@@ -6,21 +6,21 @@ import (
 	"log"
 	"os"
 )
-type Results struct {
-    Results []Result `json:"users"`
-}
 
-type Result struct {
-    Plate   string `json:"plate"`
-
-}
 
 
 type Alprd struct {
     Uuid   string `json:"uuid"`
-    Plate   string `json:"plate"`
     Results []Result `json:"results"`
 }
+
+
+type Result struct {
+    Plate   string `json:"plate"`
+    Confidence   float64 `json:"confidence"`
+}
+
+
 func main() {
 	filePath := "db.json"
 	jsonData, err := os.ReadFile(filePath)
