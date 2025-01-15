@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -13,84 +12,75 @@ import (
 	_ "github.com/mattn/go-sqlite3" // Import the sqlite3 driver
 )
 
+
+
 type Alprd struct {
-	Uuid    string   `json:"uuid"`
-	Results []Result `json:"results"`
+    Uuid       string   `json:"uuid"`
+    Results    []Result `json:"results"`
 }
 
+// Define the Result struct for the results within the Alprd struct
 type Result struct {
-	Plate      string  `json:"plate"`
+    Plate string `json:"plate"`
 }
+
+
+
 
 func main() {
-	// Open the SQLite database
-	// Open the SQLite database
-	db, err := sql.Open("sqlite3", "./alprdDb.db")
-	if err != nil {
-		log.Fatal("failed to open database: ", err)
-	}
-	defer db.Close()
+	db, err := sql.Open("sqlite3", "./mydatabase.db")
+    if err != nil {
+        log.Fatal("failed to open database: ", err)
+    }
+    defer db.Close()
+
 
 	// Create a Gin router
 	router := gin.Default()
-
 	// Create a sample table (if not exists)
 	_, err = db.Exec(`
                 CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         uuid TEXT,
                         plate TEXT
-                        site_id TEXT
                 )
         `)
 	if err != nil {
 		log.Fatal("failed to create table: ", err)
 	}
 
-	router.POST("/alprd", func(c *gin.Context) {
-		newAlprd := struct {
-			Uuid       string   `json:"uuid"`
-			Confidence float64  `json:"confidence"`
-			Results    []Result `json:"results"`
-		}{}
 
-		if err := c.BindJSON(&newAlprd); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+    router.POST("/alprd", func(c *gin.Context) {
+        var alprd Alprd
 
-		stmt, err := db.Prepare("INSERT INTO users (uuid, plate) VALUES (?, ?)")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		defer stmt.Close()
+        if err := c.BindJSON(&alprd); err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body format"})
+            return
+        }
 
-		_, err = stmt.Exec(newAlprd.Uuid, newAlprd.Confidence)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		fmt.Println(newAlprd.Results)
+        stmt, err := db.Prepare("INSERT INTO users (uuid, plate) VALUES (?, ?)")
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+            return
+        }
+        defer stmt.Close()
 
-		c.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
-	})
+        var plate interface{}
+        if alprd.Results == nil || len(alprd.Results) <= 0 {
+            plate = nil // Set plate to nil if no results are present
+        } else {
+            plate = alprd.Results[0].Plate // Extract the plate from the first result
+        }
 
-	router.POST("/alprd2", func(c *gin.Context) {
-		body, err := io.ReadAll(c.Request.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
-		data := Alprd{}
-		err = json.Unmarshal([]byte(body), &data)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		fmt.Println("uuid: ", data.Uuid)
-		c.JSON(http.StatusOK, gin.H{"message": "ALPRD created", "plate": data.Uuid})
+        _, err = stmt.Exec(alprd.Uuid, plate)
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+            return
+        }
 
-	})
+		fmt.Println(plate)
+        c.JSON(http.StatusCreated, gin.H{"message": "Data inserted successfully"})
+    })
 
 	router.GET("/video", func(c *gin.Context) {
 		filePath := "videos/1.mp4"
