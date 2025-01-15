@@ -20,7 +20,6 @@ type Alprd struct {
 
 type Result struct {
 	Plate      string  `json:"plate"`
-	Confidence float64 `json:"confidence"`
 }
 
 func main() {
@@ -52,8 +51,6 @@ func main() {
 		newAlprd := struct {
 			Uuid       string   `json:"uuid"`
 			Confidence float64  `json:"confidence"`
-			Epoch      float64  `json:"epoch_time"`
-			Processing float64  `json:"processing_time_ms"`
 			Results    []Result `json:"results"`
 		}{}
 
@@ -74,7 +71,7 @@ func main() {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		fmt.Println(newAlprd)
+		fmt.Println(newAlprd.Results)
 
 		c.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
 	})

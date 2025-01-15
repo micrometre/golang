@@ -8,10 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ALPRD struct {
-	plate string `form:"plate" binding:"required"`
-}
 
+
+type ALPRD struct {
+	plate  string `form:"plate" binding:"required"`
+}
 func main() {
 	router := gin.Default()
 	router.Static("/assets", "./assets")
@@ -41,6 +42,7 @@ func main() {
 		}
 	})
 
+
 	router.POST("/alprd", func(c *gin.Context) {
 		var alprd ALPRD
 		if err := c.ShouldBind(&alprd); err != nil {
@@ -50,6 +52,7 @@ func main() {
 		println(c.Request)
 		c.JSON(http.StatusOK, gin.H{"message": "ALPRD created", "plate": alprd.plate})
 	})
+
 
 	router.Run(":5000")
 }

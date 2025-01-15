@@ -7,19 +7,15 @@ import (
 	"os"
 )
 
-
-
 type Alprd struct {
-    Uuid   string `json:"uuid"`
-    Results []Result `json:"results"`
+	Uuid    string   `json:"uuid"`
+	Plate   string   `json:"plate"`
+	Results []Result `json:"results"`
 }
-
 
 type Result struct {
-    Plate   string `json:"plate"`
-    Confidence   float64 `json:"confidence"`
+	Plate string `json:"plate"`
 }
-
 
 func main() {
 	filePath := "db.json"
@@ -29,11 +25,12 @@ func main() {
 	}
 	data := Alprd{}
 	err = json.Unmarshal([]byte(jsonData), &data)
+	//content := string(jsonData)
 
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	fmt.Println("uuid: ", data.Uuid)
-	fmt.Println("Plate: ", data.Results)
+	fmt.Println("uuid: ", data.Results)
 }
