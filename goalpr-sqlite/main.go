@@ -34,9 +34,8 @@ func main() {
 	// Create a sample table (if not exists)
 	_, err = db.Exec(`
                 CREATE TABLE IF NOT EXISTS alprd (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        uuid TEXT,
-                        plate TEXT
+                        plate TEXT PRIMARY KEY,
+                        uuid TEXT
                 )
         `)
 	if err != nil {
@@ -51,7 +50,7 @@ func main() {
 			return
 		}
 
-		stmt, err := db.Prepare("INSERT INTO alprd (uuid, plate) VALUES (?, ?)")
+		stmt, err := db.Prepare("INSERT INTO alprd (plate, uuid) VALUES (?, ?)")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -66,7 +65,7 @@ func main() {
 		}
 		var a = "http://127.0.0.1:5000/public/images/"
 
-		_, err = stmt.Exec(a+alprd.Uuid +".jpg", plate)
+		_, err = stmt.Exec(plate,  a + alprd.Uuid +".jpg")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
