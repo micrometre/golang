@@ -88,7 +88,7 @@ func main() {
 			c.String(http.StatusBadRequest, "upload file err: %s", err.Error())
 			return
 		}
-		cmd := exec.Command("ls", "-l") // Replace with the actual command
+		cmd := exec.Command("alpr", "-c gb", filename) // Replace with the actual command
 
 		// Capture output
 		var stdout, stderr bytes.Buffer
