@@ -76,21 +76,15 @@ func main() {
 	})
 
 	router.POST("/upload", func(c *gin.Context) {
-		name := c.PostForm("name")
-		email := c.PostForm("email")
 		file, err := c.FormFile("file")
 		if err != nil {
 			c.String(http.StatusBadRequest, "get form err: %s", err.Error())
 			return
 		}
-		filename := filepath.Base(file.Filename)
-		if err := c.SaveUploadedFile(file, filename); err != nil {
-			c.String(http.StatusBadRequest, "upload file err: %s", err.Error())
-			return
-		}
-		cmd := exec.Command("alpr", "-c gb", filename) // Replace with the actual command
 
-		// Capture output
+		filename := filepath.Base(file.Filename)
+		cmd := exec.Command("ffmpeg", "-i",  filename,  "-listen", "1",  "-f",  "mp4", "-movflags", "frag_keyframe+empty_moov",  "http://127.0.0.1:5001")
+		//cmd := exec.Command("ls", "-l") // Replace with the actual command
 		var stdout, stderr bytes.Buffer
 		cmd.Stdout = &stdout
 		cmd.Stderr = &stderr
@@ -99,10 +93,14 @@ func main() {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "stderr": stderr.String()})
 			return
 		}
-
 		output := stdout.String()
-		fmt.Println(output)
-		c.String(http.StatusOK, "File %s uploaded successfully with fields name=%s and email=%s.", file.Filename, name, email)
+		fmt.Println(filename)
+		if err := c.SaveUploadedFile(file, filename); err != nil {
+			c.String(http.StatusBadRequest, "upload file err: %s", err.Error())
+			return
+		}
+
+		c.String(http.StatusOK, "File %s uploaded successfully ", output)
 	})
 
 	router.GET("/video", func(c *gin.Context) {
