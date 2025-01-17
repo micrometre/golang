@@ -4,15 +4,14 @@ import (
 	"bytes"
 	"database/sql"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3" // Import the sqlite3 driver
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
-
-	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3" // Import the sqlite3 driver
 )
 
 type Alprd struct {
@@ -33,6 +32,8 @@ func main() {
 	defer db.Close()
 
 	// Create a Gin router
+	gin.SetMode(gin.ReleaseMode)
+
 	router := gin.Default()
 	router.Static("/public", "./public")
 	// Create a sample table (if not exists)
@@ -76,15 +77,27 @@ func main() {
 	})
 
 	router.POST("/upload", func(c *gin.Context) {
+		// Get the uploaded file
 		file, err := c.FormFile("file")
 		if err != nil {
-			c.String(http.StatusBadRequest, "get form err: %s", err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Error getting uploaded file: " + err.Error()})
 			return
 		}
-
+		// Validate file extension (optional)
+		if !isAllowedExtension(file.Filename) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file extension. Only specific extensions allowed"})
+			return
+		}
+		// Generate a unique filename
 		filename := filepath.Base(file.Filename)
-		cmd := exec.Command("ffmpeg", "-i",  filename,  "-listen", "1",  "-f",  "mp4", "-movflags", "frag_keyframe+empty_moov",  "http://127.0.0.1:5001")
-		//cmd := exec.Command("ls", "-l") // Replace with the actual command
+		newFilename := filename
+		// Save the uploaded file
+		if err := c.SaveUploadedFile(file, "public/"+newFilename); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error saving uploaded file: " + err.Error()})
+			return
+		}
+		// Execute ffmpeg command
+		cmd := exec.Command("ffmpeg", "-i", "public/"+newFilename, "-listen", "1", "-f", "mp4", "-movflags", "frag_keyframe+empty_moov", "http://127.0.0.1:5001")
 		var stdout, stderr bytes.Buffer
 		cmd.Stdout = &stdout
 		cmd.Stderr = &stderr
@@ -94,13 +107,8 @@ func main() {
 			return
 		}
 		output := stdout.String()
-		fmt.Println(filename)
-		if err := c.SaveUploadedFile(file, filename); err != nil {
-			c.String(http.StatusBadRequest, "upload file err: %s", err.Error())
-			return
-		}
-
-		c.String(http.StatusOK, "File %s uploaded successfully ", output)
+		fmt.Println(newFilename, output)
+		c.JSON(http.StatusOK, gin.H{"message": "File uploaded and processed successfully"})
 	})
 
 	router.GET("/video", func(c *gin.Context) {
@@ -120,4 +128,15 @@ func main() {
 		}
 	})
 	router.Run(":5000")
+}
+
+// Function to check for allowed file extensions (optional)
+func isAllowedExtension(filename string) bool {
+	allowedExtensions := map[string]bool{
+		".mp4": true,
+		".avi": true,
+		// Add more allowed extensions here
+	}
+	ext := filepath.Ext(filename)
+	return allowedExtensions[ext]
 }
