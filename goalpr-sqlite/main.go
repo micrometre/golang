@@ -63,15 +63,15 @@ func main() {
 		} else {
 			plate = alprd.Results[0].Plate // Extract the plate from the first result
 		}
-		var a = "http://127.0.0.1:5000/public/images/"
+        var imageUrl string = "http://127.0.0.1:5000/public/images/" + alprd.Uuid + ".jpg"
 
-		_, err = stmt.Exec(plate,  a + alprd.Uuid +".jpg")
+		_, err = stmt.Exec(plate,imageUrl  )
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		fmt.Println(plate)
+		fmt.Println(imageUrl)
 		c.JSON(http.StatusCreated, gin.H{"message": "Data inserted successfully"})
 	})
 
