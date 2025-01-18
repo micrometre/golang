@@ -15,6 +15,18 @@
 
 </div>
 
+<script>
+    // Create the performance observer.
+const po = new PerformanceObserver((list) => {
+  for (const entry of list.getEntries()) {
+    // Logs all server timing data for this response
+    console.log('Server Timing', entry.serverTiming);
+  }
+});
+
+// Start listening for `navigation` entries to be dispatched.
+po.observe({type: 'navigation', buffered: true});
+</script>
 
 
 
