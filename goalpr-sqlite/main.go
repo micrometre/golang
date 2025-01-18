@@ -18,6 +18,8 @@ import (
 type Alprd struct {
 	Uuid    string   `json:"uuid"`
 	Results []Result `json:"results"`
+	Plate string `json:"plate"`
+
 }
 
 // Define the Result struct for the results within the Alprd struct
@@ -143,6 +145,32 @@ func main() {
 			return
 		}
 	})
+
+
+
+    // New GET route to retrieve all ALPR data
+    router.GET("/alprd", func(c *gin.Context) {
+        rows, err := db.Query("SELECT * FROM alprd")
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+            return
+        }
+        defer rows.Close()
+
+        var alprds []Alprd
+        for rows.Next() {
+            var alprd Alprd
+            err := rows.Scan(&alprd.Plate, &alprd.Uuid)
+            if err != nil {
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+            }
+            alprds = append(alprds, alprd)
+        }
+
+        c.JSON(http.StatusOK, alprds)
+    })
+
 	router.Run(":5000")
 }
 

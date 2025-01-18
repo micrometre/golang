@@ -25,4 +25,5 @@ df2 = gb_plates[['plate', 'uuid']]
 # Save the new DataFrame to a CSV file
 df2.to_csv('../data/gb-plates.csv', index=False)
 
-print(df, df2)
+print(df2)
+print(df2)
