@@ -1,14 +1,66 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>Single file upload</title>
 </head>
-<body>
-<h1>Upload single file with fields</h1>
 
-<form action="http://127.0.0.1:5000/upload" method="post" enctype="multipart/form-data">
-    Files: <input type="file" name="file"><br><br>
-    <input type="submit" value="Submit">
-</form>
+<body>
+    <h1>Upload single file with fields</h1>
+
+    <form action="http://127.0.0.1:5000/upload" method="post" enctype="multipart/form-data">
+        Files: <input type="file" name="file"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+
+
+    <input type="file" id="fileInput">
+    <button id="uploadButton">Upload</button>
+
+    <div id="progressContainer">
+        <progress id="progressBar" value="0" max="100"></progress>
+        <span id="progressPercentage">0%</span>
+    </div>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const progressBar = document.getElementById('progressBar');
+        const progressPercentage = document.getElementById('progressPercentage');
+
+        uploadButton.addEventListener('click', () => {
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/http://127.0.0.1:5000/upload', true);
+
+                xhr.upload.onprogress = (event) => {
+                    if (event.lengthComputable) {
+                        const percentComplete = (event.loaded / event.total) * 100;
+                        progressBar.value = percentComplete;
+                        progressPercentage.textContent = `${percentComplete.toFixed(2)}%`;
+                    }
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status === 200) {
+                        console.log('File uploaded successfully!');
+                    } else {
+                        console.error('Upload failed:', xhr.statusText);
+                    }
+                };
+
+                xhr.onerror = () => {
+                    console.error('Upload error:', xhr.statusText);
+                };
+
+                xhr.send(formData);
+            }
+        });
+    </script>
+
 </body>

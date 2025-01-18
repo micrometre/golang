@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"database/sql"
 	"fmt"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3" // Import the sqlite3 driver
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3" // Import the sqlite3 driver
 )
 
 type Alprd struct {
@@ -32,9 +33,12 @@ func main() {
 	defer db.Close()
 
 	// Create a Gin router
-	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode)
 
 	router := gin.Default()
+	router.Use(cors.Default())
+	router.LoadHTMLGlob("templates/*")
+
 	router.Static("/public", "./public")
 	// Create a sample table (if not exists)
 	_, err = db.Exec(`
@@ -46,6 +50,18 @@ func main() {
 	if err != nil {
 		log.Fatal("failed to create table: ", err)
 	}
+
+	
+	router.GET("/", func(c *gin.Context) {
+  c.HTML(
+      http.StatusOK,
+      "index.html",
+      gin.H{
+          "title": "Home Page",
+      },
+  )
+
+})
 
 	router.POST("/alprd", func(c *gin.Context) {
 		var alprd Alprd

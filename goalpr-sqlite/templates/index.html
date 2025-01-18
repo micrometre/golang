@@ -1,0 +1,22 @@
+<!--index.html-->
+
+<!--Embed the header.html template at this location-->
+{{ template "header.html" .}}
+
+
+
+<div>
+    <h1>Upload single file with fields</h1>
+
+    <form action="http://127.0.0.1:5000/upload" method="post" enctype="multipart/form-data">
+        Files: <input type="file" name="file"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+
+</div>
+
+
+
+
+<!--Embed the footer.html template at this location-->
+{{ template "footer.html" .}}
