@@ -3,7 +3,8 @@ import pandas as pd
 import re
 
 # Connect to the SQLite database
-connection = sqlite3.connect('../data/sqlite.db')
+db_path = '../data/sqlite.db'  # Replace with the actual path
+connection = sqlite3.connect(db_path)
 print(connection.total_changes)
 
 cursor = connection.cursor()
@@ -18,8 +19,10 @@ test_gb = '^[A-Z]{2}[0-9]{2}[A-Z]{3}$'  # Corrected pattern
 # Filter DataFrame for GB plates using boolean indexing
 gb_plates = df[df['plate'].str.match(test_gb)]
 
-# Create a dictionary with plate as key and uuid as value from the filtered DataFrame
-plates = gb_plates.set_index('plate')['uuid'].to_dict()
+# Create a new DataFrame with the filtered data
+df2 = gb_plates[['plate', 'uuid']] 
 
-print(plates)
-#df.to_csv('../data/upload.csv', sep='\t', encoding='utf-8' )
+# Save the new DataFrame to a CSV file
+df2.to_csv('../data/gb-plates.csv', index=False)
+
+print(df, df2)
